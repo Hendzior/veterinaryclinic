@@ -2,7 +2,6 @@ package com.hendzior.veterinary;
 
 public class Cat extends Animal {
 
-
     public Cat(String name, String gender, int age, String type) {
         super(name, gender, age, type);
     }
@@ -10,11 +9,11 @@ public class Cat extends Animal {
     @Override
     public String toString() {
         return "Cat{" +
-                "name='" + name + '\'' +
-                ", gender='" + gender + '\'' +
-                ", type='" + type + '\'' +
-                ", age=" + age +
-                ", visit=" + visit +
-                '}';
+            "name='" + name + '\'' +
+            ", gender='" + gender + '\'' +
+            ", type='" + type + '\'' +
+            ", age=" + age +
+            ", visits=" + visits +
+            '}';
     }
 }

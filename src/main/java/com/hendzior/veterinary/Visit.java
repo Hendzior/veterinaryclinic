@@ -5,12 +5,16 @@ public class Visit {
     private String description;
     private Double cost;
 
+    public Visit() {
+
+    }
+
     @Override
     public String toString() {
         return "Visit{" +
-                "description='" + description + '\'' +
-                ", cost=" + cost +
-                '}';
+            "description='" + description + '\'' +
+            ", cost=" + cost +
+            '}';
     }
 
     public Double getCost() {

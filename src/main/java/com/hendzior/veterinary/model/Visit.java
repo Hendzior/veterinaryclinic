@@ -1,9 +1,12 @@
-package com.hendzior.veterinary;
+package com.hendzior.veterinary.model;
+
+import com.hendzior.veterinary.model.Animal;
 
 public class Visit {
 
     private String description;
     private Double cost;
+    private Animal animal;
 
     public Visit() {
 
@@ -12,9 +15,9 @@ public class Visit {
     @Override
     public String toString() {
         return "Visit{" +
-            "description='" + description + '\'' +
-            ", cost=" + cost +
-            '}';
+                "description='" + description + '\'' +
+                ", cost=" + cost +
+                '}';
     }
 
     public Double getCost() {

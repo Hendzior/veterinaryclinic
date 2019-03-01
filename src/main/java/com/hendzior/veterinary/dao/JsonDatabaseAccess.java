@@ -1,21 +1,29 @@
-package com.hendzior.veterinary;
+package com.hendzior.veterinary.dao;
 
 import com.google.gson.Gson;
+import com.hendzior.veterinary.model.Customer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Repository
 public class JsonDatabaseAccess implements DatabaseAccess {
 
     private static final Logger logger = LoggerFactory.getLogger(JsonDatabaseAccess.class);
-
     private File file;
+    private Gson gson = new Gson();
 
-    Gson gson = new Gson();
+    public JsonDatabaseAccess(){
+
+    }
 
     public JsonDatabaseAccess(File file) {
         this.file = file;
@@ -34,7 +42,7 @@ public class JsonDatabaseAccess implements DatabaseAccess {
             custList.addAll(Arrays.asList(cusArray));
 
             logger.info("File {} read successfully", file);
-            System.out.println(custList);
+            logger.trace("Customers list: {}", custList);
             return custList;
 
         } catch (FileNotFoundException e) {

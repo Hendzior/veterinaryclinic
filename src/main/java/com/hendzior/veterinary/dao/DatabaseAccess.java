@@ -1,6 +1,9 @@
-package com.hendzior.veterinary;
+package com.hendzior.veterinary.dao;
+
+import com.hendzior.veterinary.model.Customer;
 
 import java.util.List;
+
 
 public interface DatabaseAccess {
 

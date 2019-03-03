@@ -1,15 +1,11 @@
 package com.hendzior.veterinary;
 
 import com.hendzior.veterinary.dao.*;
-import com.hendzior.veterinary.model.Animal;
 import com.hendzior.veterinary.model.Customer;
 import com.hendzior.veterinary.model.Visit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
 
 import java.io.File;
 import java.util.InputMismatchException;
@@ -21,31 +17,27 @@ public class Menu {
 
     private static final Logger logger = LoggerFactory.getLogger(App.class);
 
-    private String fileName = "file.json";
-    private File file = new File(fileName);
+    private String fileName1 = "customers.json";
+    private String fileName2 = "animals.json";
+    private String fileName3 = "visits.json";
+
+    private File file1 = new File(fileName1);
+    private File file2 = new File(fileName2);
+    private File file3 = new File(fileName3);
+
     private CustomerDataAccess customerDataAccess;
     private DatabaseAccess databaseAccess;
     private VisitDataAccess visitDataAccess;
     private AnimalDataAccess animalDataAccess;
     private DataInputValidator dataInputValidator;
 
-    public Menu(CustomerDataAccess customerDataAccess, DatabaseAccess databaseAccess, VisitDataAccess visitDataAccess, AnimalDataAccess animalDataAccess, DataInputValidator dataInputValidator){
-        this.customerDataAccess=customerDataAccess;
-        this.animalDataAccess=animalDataAccess;
-        this.databaseAccess=databaseAccess;
-        this.visitDataAccess=visitDataAccess;
-        this.dataInputValidator=dataInputValidator;
+    public Menu(CustomerDataAccess customerDataAccess, DatabaseAccess databaseAccess, VisitDataAccess visitDataAccess, AnimalDataAccess animalDataAccess, DataInputValidator dataInputValidator) {
+        this.customerDataAccess = customerDataAccess;
+        this.animalDataAccess = animalDataAccess;
+        this.databaseAccess = databaseAccess;
+        this.visitDataAccess = visitDataAccess;
+        this.dataInputValidator = dataInputValidator;
     }
-
-//    @Autowired
-//    private CustomerDataAccess customerDataAccess;
-
-
-//    private JsonDatabaseAccess databaseAccess = new JsonDatabaseAccess(file);
-//    private InMemoryVisitDataAccess visitDataAccess = new InMemoryVisitDataAccess();
-//    private DataInputValidator dataInputValidator = new DataInputValidator();
-//    private AnimalDataAccess animalDataAccess = new InMemoryAnimalDataAccess();
-
 
     public void menu() {
 
@@ -59,7 +51,7 @@ public class Menu {
 
                 if (choice.equals("1")) {
 
-                    customerDataAccess.getAllCustomers().addAll(databaseAccess.databaseRead());
+                    databaseAccess.databaseRead(file1);
 
                 } else if (choice.equals("2")) {
 
@@ -75,7 +67,10 @@ public class Menu {
 
                 } else if (choice.equals("6")) {
 
-                    databaseAccess.databaseWrite(customerDataAccess.getAllCustomers());
+
+                    databaseAccess.databaseWrite(customerDataAccess.findAll(), file1);
+                    databaseAccess.databaseWrite(animalDataAccess.findAll(), file2);
+                    databaseAccess.databaseWrite(visitDataAccess.findAll(), file3);
 
                 } else if (choice.equals("9")) {
                     return;
@@ -100,28 +95,26 @@ public class Menu {
 
         } else if (choice.equals("2")) {
 
-            logger.info("customers list: " + customerDataAccess.getAllCustomers());
+            logger.info("customers list: " + customerDataAccess.findAll());
 
         } else if (choice.equals("3")) {
 
             logger.info("Enter customer id: ");
             Long id = Long.parseLong(scanner.nextLine());
 
-            logger.info("Customer : " + customerDataAccess.getCustomer(id));
+            logger.info("Customer : " + customerDataAccess.findById(id));
 
         } else if (choice.equals("4")) {
 
             logger.info("Enter customer id: ");
             Long id = Long.parseLong(scanner.nextLine());
-            customerDataAccess.removeCustomer(customerDataAccess.getCustomer(id));
+            customerDataAccess.delete(customerDataAccess.findById(id));
 
         }
     }
 
     private void createCustomer(Scanner scanner) {
         try {
-//            logger.info("Enter id:");
-//            Long id = Long.parseLong(scanner.nextLine());
 
             logger.info("Enter last name:");
             String lName = scanner.nextLine();
@@ -135,9 +128,8 @@ public class Menu {
             String city = scanner.nextLine();
             dataInputValidator.validateLength(city);
 
-            Customer customer = customerDataAccess.addNewCustomer(name, lName, city);
+            customerDataAccess.save(new Customer(name, lName, city));
 
-            customerDataAccess.saveNewCustomer(customer);
         } catch (IllegalArgumentException e) {
             logger.info("Wrong data entered");
         }
@@ -145,7 +137,7 @@ public class Menu {
 
     private void animalsMenu(Scanner scanner) {
 
-        logger.info("Select option \n 1 = Add new animal \n 2 = Remove animal \n or any key = exit");
+        logger.info("Select option \n 1 = Add new animal \n 2 = Remove animal \n 3 = Show all animals \n 4 = Show animal \n or any key = exit");
 
         String choice = scanner.nextLine();
 
@@ -153,14 +145,25 @@ public class Menu {
 
             createAnimal(scanner);
 
-        } else if (choice.equals(2)) {
+        } else if (choice.equals("2")) {
 
             logger.info("Enter animal id:");
             Long id = Long.parseLong(scanner.nextLine());
 
-            animalDataAccess.removeAnimal(animalDataAccess.findById(id));
+            animalDataAccess.delete(animalDataAccess.findById(id));
 
+        } else if (choice.equals("3")) {
+
+            logger.info("All animals: " + animalDataAccess.findAll());
+
+        } else if (choice.equals("4")) {
+
+            logger.info("Enter animal id:");
+            Long id = Long.parseLong(scanner.nextLine());
+
+            logger.info("Animal: " + animalDataAccess.findById(id));
         }
+
 
     }
 
@@ -180,12 +183,10 @@ public class Menu {
             String aAge = scanner.nextLine();
             dataInputValidator.validateDob(Integer.parseInt(aAge));
 
-            Animal animal = animalDataAccess.addNewAnimal(aName, aGender, aType, aAge);
-
             logger.info("enter owners id: ");
             Long id = Long.parseLong(scanner.nextLine());
 
-            customerDataAccess.saveAnimalToCustomer(animal, id);
+            animalDataAccess.addNewAnimal(aName, aGender, aType, aAge, customerDataAccess.findById(id));
 
         } catch (IllegalArgumentException e) {
             logger.info("Wrong data entered");
@@ -203,12 +204,18 @@ public class Menu {
 
         } else if (choice.equals("2")) {
 
-            logger.info("All visits : {} ", visitDataAccess.getAllVisits());
+            logger.info("All visits : {} ", visitDataAccess.findAll());
 
         } else if (choice.equals("3")) {
 
             logger.info("Income from all visits = {}", visitDataAccess.incomeFromAllVisits());
 
+        } else if (choice.equals("4")) {
+
+            logger.info("Enter visit id:");
+            Long id = Long.parseLong(scanner.nextLine());
+
+            visitDataAccess.delete(visitDataAccess.findById(id));
         }
 
     }
@@ -221,17 +228,10 @@ public class Menu {
             logger.info("Enter visit cost");
             double cost = Double.parseDouble(scanner.nextLine());
 
-            Visit visit = visitDataAccess.addNewVisit(description, cost);
+            logger.info("Enter Animal id:");
+            Long id = Long.parseLong(scanner.nextLine());
 
-            logger.info("Enter Customer id:");
-            Long customerId = Long.parseLong(scanner.nextLine());
-
-            logger.info("Enter Animal name");
-            String animal = scanner.nextLine();
-
-            System.out.println("visit = " + visit);
-
-            visitDataAccess.saveVisit(visit, customerId, animal);
+            visitDataAccess.save(new Visit(description, cost, animalDataAccess.findById(id)));
 
         } catch (NumberFormatException e) {
             logger.info("Enter valid cost");

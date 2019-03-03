@@ -1,6 +1,5 @@
 package com.hendzior.veterinary.dao;
 
-import com.hendzior.veterinary.model.Animal;
 import com.hendzior.veterinary.model.Customer;
 
 import java.util.List;
@@ -8,16 +7,14 @@ import java.util.List;
 
 public interface CustomerDataAccess {
 
-    Customer addNewCustomer(String name, String lName, String city);
+    void save(Customer customer);
 
-    void saveNewCustomer(Customer customer);
+    Customer findById(Long id);
 
-    void saveAnimalToCustomer(Animal animal, Long id);
+    void delete(Customer customer);
 
-    Customer getCustomer(Long id);
+    List<Customer> findAll();
 
-    void removeCustomer(Customer customer);
-
-    List<Customer> getAllCustomers();
+    void saveAll(List<Customer> customers);
 
 }

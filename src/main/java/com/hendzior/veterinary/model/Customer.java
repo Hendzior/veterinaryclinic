@@ -1,14 +1,13 @@
 package com.hendzior.veterinary.model;
 
-import com.hendzior.veterinary.model.Animal;
-
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Entity
 public class Customer {
 
+    @Transient
+    private static final AtomicLong count = new AtomicLong(0);
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -16,22 +15,21 @@ public class Customer {
     private String lastName;
     private String city;
 
-    @Transient
-    private List<Animal> animals = new ArrayList<>();
-
     public Customer() {
 
     }
 
     public Customer(String name, String lastName, String city) {
 
+        this.id = count.incrementAndGet();
         this.name = name;
         this.lastName = lastName;
         this.city = city;
+
     }
 
     public Customer(Long id, String name, String lastName, String city) {
-        this.id = id;
+        this.id = count.incrementAndGet();
         this.name = name;
         this.lastName = lastName;
         this.city = city;
@@ -57,10 +55,6 @@ public class Customer {
         this.city = city;
     }
 
-    public void setAnimals(List<Animal> animals) {
-        this.animals = animals;
-    }
-
     public String getLastName() {
         return lastName;
     }
@@ -73,25 +67,6 @@ public class Customer {
         this.id = id;
     }
 
-    public List<Animal> getAnimals() {
-        return animals;
-
-    }
-
-    public void addAnimal(Animal animal) {
-
-        animals.add(animal);
-    }
-
-    public Animal findAnimal(String name) {
-
-        for (Animal animal : animals) {
-            if (animal.getName().equals(name)) {
-                return animal;
-            }
-        }
-        return null;
-    }
 
     @Override
     public String toString() {
@@ -100,7 +75,6 @@ public class Customer {
                 ", name='" + name + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", city='" + city + '\'' +
-                ", animals=" + animals +
                 '}';
     }
 }

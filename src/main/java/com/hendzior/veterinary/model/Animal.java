@@ -1,43 +1,44 @@
 package com.hendzior.veterinary.model;
 
+import javax.persistence.*;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Animal {
 
+    @Transient
+    private static final AtomicLong count = new AtomicLong(0);
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
-
-
-
     protected String name;
     protected String gender;
     protected String type;
     protected int age;
+    @ManyToOne
+    @JoinColumn(name = "CUSTOMER_ID")
     protected Customer customer;
-    protected List<Visit> visits = new ArrayList<>();
 
-    public Animal(String name, String gender, int age, String type) {
+
+    public Animal() {
+    }
+
+     public Animal(String name, String gender, int age, String type, Customer customer) {
         this.name = name;
         this.gender = gender;
         this.age = (Year.now().getValue() - age);
         this.type = type;
+        this.customer = customer;
+        this.id = count.incrementAndGet();
     }
 
     public String getName() {
         return name;
-    }
-
-    public void setVisit(List<Visit> visit) {
-        this.visits = visit;
-    }
-
-    public List<Visit> getVisit() {
-        return visits;
-    }
-
-    public void addVisit(Visit visit) {
-        visits.add(visit);
     }
 
     public Long getId() {
@@ -51,13 +52,15 @@ public class Animal {
     @Override
     public String toString() {
         return "Animal{" +
-            "name='" + name + '\'' +
-            ", gender='" + gender + '\'' +
-            ", type='" + type + '\'' +
-            ", age=" + (Year.now().getValue() - age) +
-            ", visit=" + visits +
-            '}';
+                "id='" +id+ '\''+
+                "name='" + name + '\'' +
+                ", gender='" + gender + '\'' +
+                ", type='" + type + '\'' +
+                ", age=" + (Year.now().getValue() - age) +
+                ". owner=" + customer+
+                 '}';
     }
+
 
 }
 

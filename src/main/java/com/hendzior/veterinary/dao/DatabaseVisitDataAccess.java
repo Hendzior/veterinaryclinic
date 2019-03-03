@@ -1,59 +1,53 @@
 package com.hendzior.veterinary.dao;
 
 import com.hendzior.veterinary.model.Visit;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@Primary
 @Component
-public class InMemoryVisitDataAccess implements VisitDataAccess {
+public class DatabaseVisitDataAccess implements VisitDataAccess {
 
-    private List<Visit> visits = new ArrayList<>();
 
+    private VisitRepository visitRepository;
+
+    public DatabaseVisitDataAccess(VisitRepository visitRepository) {
+        this.visitRepository = visitRepository;
+    }
 
     @Override
     public Visit addNewVisit(String description, double cost) {
-
         return null;
     }
 
     @Override
     public void save(Visit visit) {
-        visits.add(visit);
+        visitRepository.save(visit);
     }
 
     @Override
     public Visit findById(Long id) {
-        for (Visit visit : visits) {
-            if (visit.getId().equals(id)) {
-                return visit;
-            }
-        }
-        return null;
+        return visitRepository.findById(id).get();
     }
 
     @Override
     public List<Visit> findAll() {
-        return visits;
+        return ((List<Visit>) visitRepository.findAll());
     }
 
     @Override
     public double incomeFromAllVisits() {
+
         double sum = 0;
 
-        for (Visit visit : visits) {
+        for (Visit visit : visitRepository.findAll()) {
             sum += visit.getCost();
         }
-
         return sum;
     }
 
     @Override
     public void delete(Visit visit) {
-        visits.remove(visit);
+        visitRepository.delete(visit);
     }
-
 }

@@ -11,9 +11,13 @@ public interface VisitDataAccess {
 
     Visit addNewVisit(String description, double cost);
 
-    List<Visit> getAllVisits();
+    void save(Visit visit);
+
+    Visit findById(Long id);
+
+    List<Visit> findAll();
 
     double incomeFromAllVisits();
 
-    void saveVisit(Visit visit, Long id, String animalName);
+    void delete(Visit visit);
 }

@@ -1,15 +1,15 @@
 package com.hendzior.veterinary.dao;
 
-import com.hendzior.veterinary.model.Animal;
 import com.hendzior.veterinary.model.Customer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Primary
 @Component
 public class InMemoryCustomerDataAccess implements CustomerDataAccess {
 
@@ -25,35 +25,16 @@ public class InMemoryCustomerDataAccess implements CustomerDataAccess {
 
     private List<Customer> customers = new ArrayList<>();
 
-    @Override
-    public Customer addNewCustomer(String name, String lName, String city) {
-
-        Customer customer = new Customer(name, lName, city);
-
-        return customer;
-
-    }
 
     @Override
-    public void saveNewCustomer(Customer customer) {
+    public void save(Customer customer) {
 
         customers.add(customer);
 
     }
 
     @Override
-    public void saveAnimalToCustomer(Animal animal, Long id) {
-
-        for (Customer customer : customers) {
-            if (customer.getId().equals(id)) {
-                customer.addAnimal(animal);
-            }
-        }
-
-    }
-
-    @Override
-    public Customer getCustomer(Long id) {
+    public Customer findById(Long id) {
         for (Customer customer : customers) {
 
             if (customer.getId().equals(id)) {
@@ -67,15 +48,20 @@ public class InMemoryCustomerDataAccess implements CustomerDataAccess {
     }
 
     @Override
-    public void removeCustomer(Customer customer) {
+    public void delete(Customer customer) {
 
         customers.remove(customer);
     }
 
     @Override
-    public List<Customer> getAllCustomers() {
+    public List<Customer> findAll() {
 
         return customers;
+    }
+
+    @Override
+    public void saveAll(List<Customer> customersList) {
+        customers.addAll(customersList);
     }
 
 }

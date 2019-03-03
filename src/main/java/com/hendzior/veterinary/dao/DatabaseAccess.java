@@ -1,14 +1,13 @@
 package com.hendzior.veterinary.dao;
 
-import com.hendzior.veterinary.model.Customer;
-
+import java.io.File;
 import java.util.List;
 
 
 public interface DatabaseAccess {
 
-    List<Customer> databaseRead();
+    <T> List<T> databaseRead(File file);
 
-    void databaseWrite(List<Customer> customersList);
+    <T> void databaseWrite(List<T> list, File file);
 
 }

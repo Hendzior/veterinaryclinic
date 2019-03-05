@@ -1,24 +1,16 @@
 package com.hendzior.veterinary.dao;
 
 import com.hendzior.veterinary.model.Visit;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Optional;
 
-@Component
+
 public class DatabaseVisitDataAccess implements VisitDataAccess {
 
-
+    @Autowired
     private VisitRepository visitRepository;
-
-    public DatabaseVisitDataAccess(VisitRepository visitRepository) {
-        this.visitRepository = visitRepository;
-    }
-
-    @Override
-    public Visit addNewVisit(String description, double cost) {
-        return null;
-    }
 
     @Override
     public void save(Visit visit) {
@@ -26,8 +18,8 @@ public class DatabaseVisitDataAccess implements VisitDataAccess {
     }
 
     @Override
-    public Visit findById(Long id) {
-        return visitRepository.findById(id).get();
+    public Optional<Visit> findById(Long id) {
+        return visitRepository.findById(id);
     }
 
     @Override

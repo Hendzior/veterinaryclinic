@@ -1,11 +1,14 @@
 package com.hendzior.veterinary.model;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.time.Year;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
+@Data
+@NoArgsConstructor
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Animal {
@@ -24,11 +27,7 @@ public class Animal {
     @JoinColumn(name = "CUSTOMER_ID")
     protected Customer customer;
 
-
-    public Animal() {
-    }
-
-     public Animal(String name, String gender, int age, String type, Customer customer) {
+    public Animal(String name, String gender, int age, String type, Customer customer) {
         this.name = name;
         this.gender = gender;
         this.age = (Year.now().getValue() - age);
@@ -36,31 +35,5 @@ public class Animal {
         this.customer = customer;
         this.id = count.incrementAndGet();
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Override
-    public String toString() {
-        return "Animal{" +
-                "id='" +id+ '\''+
-                "name='" + name + '\'' +
-                ", gender='" + gender + '\'' +
-                ", type='" + type + '\'' +
-                ", age=" + (Year.now().getValue() - age) +
-                ". owner=" + customer+
-                 '}';
-    }
-
-
 }
 

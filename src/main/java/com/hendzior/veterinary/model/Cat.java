@@ -1,14 +1,12 @@
 package com.hendzior.veterinary.model;
 
-import com.hendzior.veterinary.model.Animal;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 
+@NoArgsConstructor
 @Entity
 public class Cat extends Animal {
-
-    public Cat() {
-    }
 
     public Cat(String name, String gender, int age, String type, Customer customer) {
         super(name, gender, age, type, customer);

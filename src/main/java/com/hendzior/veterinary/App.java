@@ -13,6 +13,7 @@ public class App {
 
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);
+
 //      ConfigurableApplicationContext configurableApplicationContext = SpringApplication.run(Menu.class, args);
 //      Menu menu = configurableApplicationContext.getBean(Menu.class);
 //      menu.menu();

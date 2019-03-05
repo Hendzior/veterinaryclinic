@@ -1,24 +1,16 @@
 package com.hendzior.veterinary.dao;
 
 import com.hendzior.veterinary.model.Visit;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-@Primary
-@Component
+@Slf4j
 public class InMemoryVisitDataAccess implements VisitDataAccess {
 
     private List<Visit> visits = new ArrayList<>();
-
-
-    @Override
-    public Visit addNewVisit(String description, double cost) {
-
-        return null;
-    }
 
     @Override
     public void save(Visit visit) {
@@ -26,13 +18,14 @@ public class InMemoryVisitDataAccess implements VisitDataAccess {
     }
 
     @Override
-    public Visit findById(Long id) {
+    public Optional<Visit> findById(Long id) {
         for (Visit visit : visits) {
             if (visit.getId().equals(id)) {
-                return visit;
+                return Optional.of(visit);
             }
         }
-        return null;
+        log.error("Visit id: {} not found!",id);
+        return Optional.empty();
     }
 
     @Override

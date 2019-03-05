@@ -1,30 +1,16 @@
 package com.hendzior.veterinary.dao;
 
 import com.hendzior.veterinary.model.Customer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-@Primary
-@Component
+@Slf4j
 public class InMemoryCustomerDataAccess implements CustomerDataAccess {
 
-    private static final Logger logger = LoggerFactory.getLogger(InMemoryCustomerDataAccess.class);
-
-    public List<Customer> getCustomers() {
-        return customers;
-    }
-
-    public void setCustomers(List<Customer> customers) {
-        this.customers = customers;
-    }
-
     private List<Customer> customers = new ArrayList<>();
-
 
     @Override
     public void save(Customer customer) {
@@ -34,17 +20,16 @@ public class InMemoryCustomerDataAccess implements CustomerDataAccess {
     }
 
     @Override
-    public Customer findById(Long id) {
+    public Optional<Customer> findById(Long id) {
         for (Customer customer : customers) {
 
             if (customer.getId().equals(id)) {
-                return customer;
-            } else {
-                logger.info("Customer not found");
+                return Optional.of(customer);
             }
 
         }
-        return null;
+        log.error("Customer id:{} not found", id);
+        return Optional.empty();
     }
 
     @Override
@@ -54,7 +39,7 @@ public class InMemoryCustomerDataAccess implements CustomerDataAccess {
     }
 
     @Override
-    public List<Customer> findAll() {
+    public Iterable<Customer> findAll() {
 
         return customers;
     }

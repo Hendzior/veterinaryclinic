@@ -22,7 +22,7 @@ public class DataInputValidator {
     public void validateGen(String gender) {
         if (!gender.equalsIgnoreCase("male") && !gender.equalsIgnoreCase("female") || gender.isEmpty()) {
 
-            logger.info("data input is not male or female");
+            logger.info(" male or female");
             throw new IllegalArgumentException();
         }
     }

@@ -42,4 +42,9 @@ public class DatabaseVisitDataAccess implements VisitDataAccess {
     public void delete(Visit visit) {
         visitRepository.delete(visit);
     }
+
+    @Override
+    public void saveAll(List<Visit> visits) {
+        visitRepository.saveAll(visits);
+    }
 }

@@ -3,6 +3,7 @@ package com.hendzior.veterinary.dao;
 import com.hendzior.veterinary.model.Animal;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -32,5 +33,10 @@ public class DatabaseAnimalDataAccess implements AnimalDataAccess {
 
         animalRepository.delete(animal);
 
+    }
+
+    @Override
+    public void saveAll(List<Animal> animalsList) {
+        animalRepository.saveAll(animalsList);
     }
 }

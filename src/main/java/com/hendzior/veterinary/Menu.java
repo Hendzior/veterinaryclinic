@@ -1,5 +1,6 @@
 package com.hendzior.veterinary;
 
+import com.google.gson.reflect.TypeToken;
 import com.hendzior.veterinary.dao.*;
 import com.hendzior.veterinary.model.Animal;
 import com.hendzior.veterinary.model.Customer;
@@ -8,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.InputMismatchException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -50,9 +52,15 @@ public class Menu {
                 String choice = scanner.nextLine();
 
                 if (choice.equals("1")) {
-
-                    externalDataAccess.importFile(file1);
-
+                    Type typeCustomer = new TypeToken<Customer[]>() {
+                    }.getType();
+                    Type typeAnimal = new TypeToken<Animal[]>() {
+                    }.getType();
+                    Type typeVisit = new TypeToken<Visit[]>() {
+                    }.getType();
+                    customerDataAccess.saveAll(externalDataAccess.importFile(file1, typeCustomer));
+                    animalDataAccess.saveAll(externalDataAccess.importFile(file2, typeAnimal));
+                    visitDataAccess.saveAll(externalDataAccess.importFile(file3, typeVisit));
                 } else if (choice.equals("2")) {
 
                     customersMenu(scanner);

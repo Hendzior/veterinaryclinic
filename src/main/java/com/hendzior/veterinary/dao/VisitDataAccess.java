@@ -18,4 +18,6 @@ public interface VisitDataAccess {
     double incomeFromAllVisits();
 
     void delete(Visit visit);
+
+    void saveAll(List<Visit> visits);
 }

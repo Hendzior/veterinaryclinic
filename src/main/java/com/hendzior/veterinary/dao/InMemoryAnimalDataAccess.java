@@ -41,4 +41,9 @@ public class InMemoryAnimalDataAccess implements AnimalDataAccess {
 
     }
 
+    @Override
+    public void saveAll(List<Animal> animalsList) {
+        animals.addAll(animalsList);
+    }
+
 }

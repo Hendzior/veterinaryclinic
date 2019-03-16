@@ -49,4 +49,9 @@ public class InMemoryVisitDataAccess implements VisitDataAccess {
         visits.remove(visit);
     }
 
+    @Override
+    public void saveAll(List<Visit> visitsList) {
+        visits.addAll(visitsList);
+    }
+
 }

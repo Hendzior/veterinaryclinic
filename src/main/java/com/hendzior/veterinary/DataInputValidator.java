@@ -2,13 +2,16 @@ package com.hendzior.veterinary;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.time.Year;
 
+@Component
 public class DataInputValidator {
     private static final Logger logger = LoggerFactory.getLogger(DataInputValidator.class);
 
-    public void customerValidator(String str) {
+    public void validateLength(String str) {
         if (str.length() < 2 || str.length() > 15 || str.isEmpty()) {
 
             logger.info("data input to short or too long");
@@ -19,7 +22,7 @@ public class DataInputValidator {
     public void validateGen(String gender) {
         if (!gender.equalsIgnoreCase("male") && !gender.equalsIgnoreCase("female") || gender.isEmpty()) {
 
-            logger.info("data input is not male or female");
+            logger.info(" male or female");
             throw new IllegalArgumentException();
         }
     }

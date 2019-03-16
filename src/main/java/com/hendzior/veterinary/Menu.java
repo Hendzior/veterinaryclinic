@@ -1,40 +1,66 @@
 package com.hendzior.veterinary;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.gson.reflect.TypeToken;
+import com.hendzior.veterinary.dao.*;
+import com.hendzior.veterinary.model.Animal;
+import com.hendzior.veterinary.model.Customer;
+import com.hendzior.veterinary.model.Visit;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.InputMismatchException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+@Slf4j
+@Component
 public class Menu {
 
-    private static final Logger logger = LoggerFactory.getLogger(App.class);
 
-    private String fileName = "file.json";
-    private File file = new File(fileName);
+    private String fileName1 = "customers.json";
+    private String fileName2 = "animals.json";
+    private String fileName3 = "visits.json";
 
-    private Customers customers = new Customers();
-    private JsonDatabaseAccess databaseAccess = new JsonDatabaseAccess(file);
-    private ConsoleCustomerDataAccess customerDataAccess = new ConsoleCustomerDataAccess();
-    private ConsoleVisitDataAccess visitDataAccess = new ConsoleVisitDataAccess();
-    private DataInputValidator dataInputValidator = new DataInputValidator();
-    private ConsoleAnimalDataAccess animalDataAccess = new ConsoleAnimalDataAccess();
+    private File file1 = new File(fileName1);
+    private File file2 = new File(fileName2);
+    private File file3 = new File(fileName3);
+
+    private CustomerDataAccess customerDataAccess;
+    private ExternalDataAccess externalDataAccess;
+    private VisitDataAccess visitDataAccess;
+    private AnimalDataAccess animalDataAccess;
+    private DataInputValidator dataInputValidator;
+
+    public Menu(CustomerDataAccess customerDataAccess, ExternalDataAccess externalDataAccess, VisitDataAccess visitDataAccess, AnimalDataAccess animalDataAccess, DataInputValidator dataInputValidator) {
+        this.customerDataAccess = customerDataAccess;
+        this.animalDataAccess = animalDataAccess;
+        this.externalDataAccess = externalDataAccess;
+        this.visitDataAccess = visitDataAccess;
+        this.dataInputValidator = dataInputValidator;
+    }
 
     public void menu() {
 
         try (Scanner scanner = new Scanner(System.in)) {
 
             while (true) {
-                logger.info("Select option \n 1 = read local database \n 2 = Customers menu \n 3 = Animals menu \n 4 = Visits menu " +
-                    "\n 6 = write to local database \n 0 = exit");
+                log.info("Select option \n 1 = read local database \n 2 = Customers menu \n 3 = Animals menu \n 4 = Visits menu " +
+                        "\n 6 = write to local database \n 0 = exit");
 
                 String choice = scanner.nextLine();
 
                 if (choice.equals("1")) {
-
-                    customers.setCustomersList(databaseAccess.databaseRead());
-
+                    Type typeCustomer = new TypeToken<Customer[]>() {
+                    }.getType();
+                    Type typeAnimal = new TypeToken<Animal[]>() {
+                    }.getType();
+                    Type typeVisit = new TypeToken<Visit[]>() {
+                    }.getType();
+                    customerDataAccess.saveAll(externalDataAccess.importFile(file1, typeCustomer));
+                    animalDataAccess.saveAll(externalDataAccess.importFile(file2, typeAnimal));
+                    visitDataAccess.saveAll(externalDataAccess.importFile(file3, typeVisit));
                 } else if (choice.equals("2")) {
 
                     customersMenu(scanner);
@@ -49,7 +75,10 @@ public class Menu {
 
                 } else if (choice.equals("6")) {
 
-                    databaseAccess.databaseWrite(customers.getCustomersList());
+
+                    externalDataAccess.exportFile(customerDataAccess.findAll(), file1);
+                    externalDataAccess.exportFile(animalDataAccess.findAll(), file2);
+                    externalDataAccess.exportFile(visitDataAccess.findAll(), file3);
 
                 } else if (choice.equals("9")) {
                     return;
@@ -57,148 +86,180 @@ public class Menu {
             }
 
         } catch (InputMismatchException e) {
-            logger.error("wrong data input", e);
+            log.error("wrong data input", e);
 
         }
     }
 
     private void customersMenu(Scanner scanner) {
+        try {
+            log.info("Select option \n 1 = Add new customer \n 2 = Show all customers " +
+                    "\n 3 = find a customer \n 4 = remove customer \n or any key = exit");
+            String choice = scanner.nextLine();
 
-        logger.info("Select option \n 1 = Add new customer \n 2 = Show all customers " +
-            "\n 3 = find a customer \n 4 = remove customer \n or any key = exit");
-        String choice = scanner.nextLine();
+            if (choice.equals("1")) {
 
-        if (choice.equals("1")) {
+                createCustomer(scanner);
 
-            try {
-                logger.info("Enter id:");
-                String id = scanner.nextLine();
+            } else if (choice.equals("2")) {
 
-                logger.info("Enter last name:");
-                String lName = scanner.nextLine();
-                dataInputValidator.customerValidator(lName);
+                log.info("customers list: " + customerDataAccess.findAll());
 
-                logger.info("Enter name:");
-                String name = scanner.nextLine();
-                dataInputValidator.customerValidator(name);
+            } else if (choice.equals("3")) {
 
-                logger.info("Enter city:");
-                String city = scanner.nextLine();
-                dataInputValidator.customerValidator(city);
+                log.info("Enter customer id: ");
+                Long id = Long.parseLong(scanner.nextLine());
 
-                Customer customer = customerDataAccess.addNewCustomer(id, name, lName, city);
+                log.info("Customer : " + customerDataAccess.findById(id));
 
-                customerDataAccess.saveNewCustomer(customer);
-            } catch (IllegalArgumentException e) {
-                logger.info("Wrong data entered");
+            } else if (choice.equals("4")) {
+
+                log.info("Enter customer id: ");
+                Long id = Long.parseLong(scanner.nextLine());
+                customerDataAccess.delete(customerDataAccess.findById(id).orElseThrow(() -> new NoSuchElementException(id.toString())));
             }
+        } catch (NumberFormatException e) {
+            log.error("Enter valid ID number!");
+        } catch (NoSuchElementException id) {
+            log.error("Customer with id {} not found!", id.getLocalizedMessage());
+        }
+    }
 
-        } else if (choice.equals("2")) {
 
-            logger.info("customers list: " + customerDataAccess.getAllCustomers());
+    private void createCustomer(Scanner scanner) {
+        try {
 
-        } else if (choice.equals("3")) {
+            log.info("Enter last name:");
+            String lName = scanner.nextLine();
+            dataInputValidator.validateLength(lName);
 
-            logger.info("Enter customer id: ");
-            String id = scanner.nextLine();
+            log.info("Enter name:");
+            String name = scanner.nextLine();
+            dataInputValidator.validateLength(name);
 
-            logger.info("Customer : " + customerDataAccess.getCustomer(id));
+            log.info("Enter city:");
+            String city = scanner.nextLine();
+            dataInputValidator.validateLength(city);
 
-        } else if (choice.equals("4")) {
+            customerDataAccess.save(new Customer(name, lName, city));
 
-            logger.info("Enter customer id: ");
-            String id = scanner.nextLine();
-            customerDataAccess.removeCustomer(id);
-
+        } catch (IllegalArgumentException e) {
+            log.info("Wrong data entered");
         }
     }
 
     private void animalsMenu(Scanner scanner) {
 
-        logger.info("Select option \n 1 = Add new animal \n 2 = Remove animal \n or any key = exit");
+        log.info("Select option \n 1 = Add new animal \n 2 = Remove animal \n 3 = Show all animals \n 4 = Show animal \n or any key = exit");
 
         String choice = scanner.nextLine();
 
         if (choice.equals("1")) {
 
+            createNewAnimal(scanner);
+
+        } else if (choice.equals("2")) {
             try {
-                logger.info("Enter animal name:");
-                String aName = scanner.nextLine();
-                dataInputValidator.customerValidator(aName);
-                logger.info("Enter animal gender:");
-                String aGender = scanner.nextLine();
-                dataInputValidator.validateGen(aGender);
+                log.info("Enter animal id:");
+                Long id = Long.parseLong(scanner.nextLine());
 
-                logger.info("Enter animal type:");
-                String aType = scanner.nextLine();
-
-                logger.info("Enter animal year of birth:");
-                String aAge = scanner.nextLine();
-                dataInputValidator.validateDob(Integer.parseInt(aAge));
-
-                Animal animal = animalDataAccess.addNewAnimal(aName, aGender, aType, aAge);
-
-                logger.info("enter owners id: ");
-                String id = scanner.nextLine();
-
-                customerDataAccess.saveAnimalToCustomer(animal, id);
-
-            } catch (IllegalArgumentException e) {
-                logger.info("Wrong data entered");
+                animalDataAccess.delete(animalDataAccess.findById(id).orElseThrow(() -> new NoSuchElementException(id.toString())));
+            } catch (NumberFormatException e) {
+                log.error("Enter valid ID number!");
+            } catch (NoSuchElementException id) {
+                log.error("Animal with id {} not found!", id.getLocalizedMessage());
             }
-        } else if (choice.equals(2)) {
 
-            logger.info("Enter animal name:");
-            String animalName = scanner.nextLine();
+        } else if (choice.equals("3")) {
 
-            logger.info("Enter owner id:");
-            String id = scanner.nextLine();
+            log.info("All animals: " + animalDataAccess.findAll());
 
-            animalDataAccess.removeAnimal(id, animalName);
+        } else if (choice.equals("4")) {
 
+            log.info("Enter animal id:");
+            Long id = Long.parseLong(scanner.nextLine());
+
+            log.info("Animal: " + animalDataAccess.findById(id));
         }
 
+
+    }
+
+    private void createNewAnimal(Scanner scanner) {
+        try {
+            log.info("Enter animal name:");
+            String aName = scanner.nextLine();
+            dataInputValidator.validateLength(aName);
+            log.info("Enter animal gender:");
+            String aGender = scanner.nextLine();
+            dataInputValidator.validateGen(aGender);
+
+            log.info("Enter animal type:");
+            String aType = scanner.nextLine();
+
+            log.info("Enter animal year of birth:");
+            String aAge = scanner.nextLine();
+            dataInputValidator.validateDob(Integer.parseInt(aAge));
+
+            log.info("enter owners id: ");
+            Long id = Long.parseLong(scanner.nextLine());
+
+            Animal animal = animalDataAccess.createAnimal(aName, aGender, aType, aAge, customerDataAccess.findById(id).orElseThrow(() -> new NoSuchElementException(id.toString())));
+            animalDataAccess.save(animal);
+
+        } catch (IllegalArgumentException e) {
+            log.error("Wrong data entered");
+        } catch (NoSuchElementException id) {
+            log.error("Customer with id: {} not found!", id.getLocalizedMessage());
+        }
     }
 
     private void visitsMenu(Scanner scanner) {
 
-        logger.info("Select option \n 1 = Add new visit \n 2 = Show all visits \n 3 = Show income from all visits \n or any key = exit");
+        log.info("Select option \n 1 = Add new visit \n 2 = Show all visits \n 3 = Show income from all visits \n or any key = exit");
 
         String choice = scanner.nextLine();
 
         if (choice.equals("1")) {
-            try {
-                logger.info("Enter visit description:");
-                String description = scanner.nextLine();
-
-                logger.info("Enter visit cost");
-                double cost = Double.parseDouble(scanner.nextLine());
-
-                Visit visit = visitDataAccess.addNewVisit(description, cost);
-
-                logger.info("Enter Customer id:");
-                String customerId = scanner.nextLine();
-
-                logger.info("Enter Animal name");
-                String animal = scanner.nextLine();
-
-                System.out.println("visit = " + visit);
-
-                visitDataAccess.saveVisit(visit, customerId, animal);
-
-            } catch (NumberFormatException e) {
-                logger.info("Enter valid cost");
-            }
+            createVisit(scanner);
 
         } else if (choice.equals("2")) {
 
-            logger.info("All visits : {} ", visitDataAccess.getAllVisits());
+            log.info("All visits : {} ", visitDataAccess.findAll());
 
         } else if (choice.equals("3")) {
 
-            logger.info("Income from all visits = {}", visitDataAccess.incomeFromAllVisits());
+            log.info("Income from all visits = {}", visitDataAccess.incomeFromAllVisits());
 
+        } else if (choice.equals("4")) try {
+
+            log.info("Enter visit id:");
+            Long id = Long.parseLong(scanner.nextLine());
+
+            visitDataAccess.delete(visitDataAccess.findById(id).orElseThrow(() -> new NoSuchElementException(id.toString())));
+        } catch (NoSuchElementException id) {
+            log.error("Visit with id {} not found!", id.getLocalizedMessage());
         }
+    }
 
+
+    private void createVisit(Scanner scanner) {
+        try {
+            log.info("Enter visit description:");
+            String description = scanner.nextLine();
+
+            log.info("Enter visit cost");
+            double cost = Double.parseDouble(scanner.nextLine());
+
+            log.info("Enter Animal id:");
+            Long id = Long.parseLong(scanner.nextLine());
+
+            visitDataAccess.save(new Visit(description, cost, animalDataAccess.findById(id).orElseThrow(() -> new NoSuchElementException(id.toString()))));
+
+        } catch (NumberFormatException e) {
+            log.error("Enter valid visit cost or animal ID number!");
+        } catch (NoSuchElementException id) {
+            log.error("Animal with id {} not found!", id.getLocalizedMessage());
+        }
     }
 }

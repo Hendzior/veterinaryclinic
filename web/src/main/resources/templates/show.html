@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="message" th:if="message">
+    <h2 th:text="${message}"/>
+</div>
+<div th:if="${customers}">
+    <table class="table table-bordered">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>City</th>
+        </tr>
+        <tbody th:each="customer :${customers}">
+        <td th:text="${customer.id}"></td>
+        <td th:text="${customer.name}"></td>
+        <td th:text="${customer.lastName}"></td>
+        <td th:text="${customer.city}"></td>
+        <td><a th:href="@{'/customers/' + ${customer.getId()} +'/edit'}" class="btn btn-primary">Edit</a></td>
+        <td><a th:href="@{'/customers/' + ${customer.getId()} +'/delete'}" onclick="return confirm('Are you sure?')"
+               class="btn btn-primary">Delete</a></td>
+        </tbody>
+    </table>
+    <a th:href="@{'/customers/add'}" class="btn btn-primary">Add customer</a>
+</div>
+
+<div th:if="${animals}">
+    <table class="table table-bordered">
+        <h2>Animals list: </h2>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Age</th>
+            <th>Gender</th>
+            <th>Customer id</th>
+        </tr>
+        <tbody th:each="animal :${animals}">
+        <td th:text="${animal.id}"></td>
+        <td th:text="${animal.name}"></td>
+        <td th:text="${animal.type}"></td>
+        <td th:text="${animal.age}"></td>
+        <td th:text="${animal.gender}"></td>
+        <td th:text="${animal?.customer?.id}"></td>
+
+        <td><a th:href="@{'/animals/' + ${animal.getId()} +'/edit'}" class="btn btn-primary">Edit</a></td>
+        <td><a th:href="@{'/animals/' + ${animal.getId()} +'/delete'}" onclick="return confirm('Are you sure?')"
+               class="btn btn-primary">Delete</a></td>
+        </tbody>
+    </table>
+    <a th:href="@{'/animals/add'}" class="btn btn-primary">Add animal</a>
+</div>
+
+<div th:if="${visits}">
+    <table class="table table-bordered">
+        <h2>Visits list: </h2>
+        <tr>
+            <th>ID</th>
+            <th>Description</th>
+            <th>Cost</th>
+            <th>Animal</th>
+            <th>Customer</th>
+        </tr>
+        <tbody th:each="visit :${visits}">
+        <td th:text="${visit.id}"></td>
+        <td th:text="${visit.description}"></td>
+        <td th:text="${visit.cost}"></td>
+        <td th:text="${visit?.animal?.name}"></td>
+        <td th:text="${visit?.animal?.customer?.lastName}"></td>
+        <td><a th:href="@{'/visits/' + ${visit.getId()} +'/edit'}" class="btn btn-primary">Edit</a></td>
+        <td><a th:href="@{'/visits/' + ${visit.getId()} +'/delete'}" onclick="return confirm('Are you sure?')"
+               class="btn btn-primary">Delete</a></td>
+        </tbody>
+    </table>
+    <a th:href="@{'/visits/add'}" class="btn btn-primary">Add visit</a>
+</div>
+</body>
+</html>

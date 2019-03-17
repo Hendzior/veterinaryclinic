@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Add customer</title>
+</head>
+<body>
+    <h2>Add new Customer:</h2>
+<form action="/customers" method="post" th:object="${customer}" class="text-input">
+    <input type="hidden" th:field="${customer.id}">
+    <p>Enter customers name: </p>
+    <input type="text" th:field="${customer.name}">
+    <div class="alert alert-warning" th:if="${#fields.hasErrors('name')}" th:eror="*{name}">Must be valid customer name</div>
+    <p>Enter customers last name: </p>
+    <input type="text" th:field="${customer.lastName}">
+    <div class="alert alert-warning" th:if="${#fields.hasErrors('lastName')}" th:eror="*{lastName}">Must be valid customer last name</div>
+    <p>Enter customers city: </p>
+    <input type="text" th:field="${customer.city}">
+    <div class="alert alert-warning" th:if="${#fields.hasErrors('city')}" th:eror="*{city}">Must be valid customer city</div>
+    <input type="submit" value="Add!">
+</form>
+</body>
+</html>

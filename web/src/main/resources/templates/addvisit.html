@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Visit</title>
+</head>
+<body>
+<h2>Add new visit:</h2>
+<form action="/visits" method="post" th:object="${visit}" class="text-input">
+    <input type="hidden" th:field="${visit.id}">
+    <p>Enter visit description:</p>
+    <textarea required th:field="${visit.description}"></textarea>
+    <p>Enter visit cost:</p>
+    <input type="text" th:field="${visit.cost}">
+    <div class="alert alert-warning" th:if="${#fields.hasErrors('cost')}" th:eror="*{cost}">Must be valid visit cost</div>
+    <p>Select animal:</p>
+    <select required th:field="${visit.animal.id}" id="drop-animal">
+        <option value="">Select animal:</option>
+        <option th:each="animal : ${animals}" th:value="${animal.id}" th:text="${animal.name}"></option>
+    </select>
+    <input type="submit" value="Add!">
+</form>
+</body>
+</html>

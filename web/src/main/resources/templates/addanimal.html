@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Add animal</title>
+</head>
+<body>
+<h2>Add animal</h2>
+<form action="/animals" method="post" th:object="${animal}" class="text-input">
+    <input type="hidden" th:field="${animal.id}">
+    <p>Enter animals name: </p>
+    <input type="text" th:field="${animal.name}">
+    <div class="alert alert-warning" th:if="${#fields.hasErrors('name')}" th:eror="*{name}">Must be valid animal name</div>
+    <p>Select animals gender: </p>
+    <select th:field="${animal.gender}">
+        <option value="">select gender</option>
+        <option th:value="male" th:text="male"></option>
+        <option th:value="female" th:text="female"></option>
+    </select>
+    <div class="alert alert-warning" th:if="${#fields.hasErrors('gender')}" th:eror="*{gender}">Select gender!</div>
+    <p>Enter animals type: </p>
+    <input type="text" th:field="${animal.type}">
+    <p>Enter animals age: </p>
+    <input type="text" th:field="${animal.age}">
+    <div class="alert alert-warning" th:if="${#fields.hasErrors('age')}" th:eror="*{age}">Must be valid animal age
+        (0-50)</div>
+    <p>Select animals owner: </p>
+    <select required th:field="${animal.customer.id}">
+        <option value="">select customer</option>
+        <option th:each="customer : ${customers}" th:value="${customer.id}" th:text="${customer.lastName}"></option>
+        <input type="submit" value="Add!">
+    </select>
+</form>
+</body>
+</html>

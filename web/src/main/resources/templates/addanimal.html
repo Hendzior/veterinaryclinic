@@ -3,33 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <title>Add animal</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="custom.css">
 </head>
 <body>
-<h2>Add animal</h2>
-<form action="/animals" method="post" th:object="${animal}" class="text-input">
-    <input type="hidden" th:field="${animal.id}">
-    <p>Enter animals name: </p>
-    <input type="text" th:field="${animal.name}">
-    <div class="alert alert-warning" th:if="${#fields.hasErrors('name')}" th:eror="*{name}">Must be valid animal name</div>
-    <p>Select animals gender: </p>
-    <select th:field="${animal.gender}">
-        <option value="">select gender</option>
-        <option th:value="male" th:text="male"></option>
-        <option th:value="female" th:text="female"></option>
-    </select>
-    <div class="alert alert-warning" th:if="${#fields.hasErrors('gender')}" th:eror="*{gender}">Select gender!</div>
-    <p>Enter animals type: </p>
-    <input type="text" th:field="${animal.type}">
-    <p>Enter animals age: </p>
-    <input type="text" th:field="${animal.age}">
-    <div class="alert alert-warning" th:if="${#fields.hasErrors('age')}" th:eror="*{age}">Must be valid animal age
-        (0-50)</div>
-    <p>Select animals owner: </p>
-    <select required th:field="${animal.customer.id}">
-        <option value="">select customer</option>
-        <option th:each="customer : ${customers}" th:value="${customer.id}" th:text="${customer.lastName}"></option>
-        <input type="submit" value="Add!">
-    </select>
-</form>
+<div class="container">
+    <form action="/animals" method="post" th:object="${animal}" class="form-horizontal">
+        <input type="hidden" th:field="${animal.id}">
+        <div class="form-group">
+            <h2>Add animal</h2>
+            <label for="name">Enter animals name: </label>
+            <input type="text" class="form-control" th:field="${animal.name}" id="name">
+            <div class="alert alert-warning" th:if="${#fields.hasErrors('name')}"
+                 th:eror="*{name}">Must be valid animal name!</div>
+        </div>
+        <div class="form-group">
+            <label for="gen">Select animals gender: </label>
+            <select class="form-control" th:field="${animal.gender}" id="gen" >
+                <option value="">Select gender</option>
+                <option th:value="male" th:text="male"></option>
+                <option th:value="female" th:text="female"></option>
+            </select>
+        </div>
+        <div class="alert alert-warning" th:if="${#fields.hasErrors('gender')}"
+             th:eror="*{gender}">Select gender!</div>
+        <div class="form-group">
+            <label for="type">Enter animals type: </label>
+            <input type="text" class="form-control" th:field="${animal.type}" id="type" >
+            <label for="age">Enter animals age: </label>
+            <input type="text" class="form-control" th:field="${animal.age}" id="age">
+            <div class="alert alert-warning" th:if="${#fields.hasErrors('age')}"
+                 th:eror="*{age}">Must be valid animal age (0-50)</div>
+            <label for="cust">Select animals owner: </label>
+            <select required th:field="${animal.customer.id}" class="form-control" id="cust">
+                <option value="">Select customer</option>
+                <option th:each="customer : ${customers}" th:value="${customer.id}"
+                        th:text="${customer.lastName}"></option>
+            </select>
+        </div>
+        <input type="submit" value="Add!" class="btn btn-default">
+    </form>
+
+
+</div>
+
 </body>
 </html>

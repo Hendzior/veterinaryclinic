@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Add customer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="custom.css">
+</head>
+<body>
+<div class="container">
+    <h2>Add new Customer:</h2>
+    <form action="/customers" class="form-group" method="post" th:object="${customer}">
+        <input type="hidden" th:field="${customer.id}">
+        <div class="form-group">
+            <p>Enter customers name: </p>
+            <input type="text" th:field="${customer.name}" class="form-control">
+            <div class="alert alert-warning" th:if="${#fields.hasErrors('name')}"
+                 th:eror="*{name}">Must be valid customer name!</div>
+        </div>
+        <div class="form-group">
+            <p>Enter customers last name: </p>
+            <input type="text" th:field="${customer.lastName}" class="form-control">
+            <div class="alert alert-warning" th:if="${#fields.hasErrors('lastName')}"
+                 th:eror="*{lastName}">Must be valid customer last name!</div>
+        </div>
+            <div class="form-group">
+                <p>Enter customers city: </p>
+                <input type="text" th:field="${customer.city}" class="form-control">
+                <div class="alert alert-warning" th:if="${#fields.hasErrors('city')}"
+                     th:eror="*{city}">Must be valid customer city!</div>
+            </div>
+        <input type="submit" value="Add!" class="btn btn-default">
+    </form>
+</div>
+</body>
+</html>

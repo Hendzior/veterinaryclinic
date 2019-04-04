@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Visit</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="custom.css">
+</head>
+<body>
+<div class="container">
+    <form action="/visits" method="post" th:object="${visit}" class="text-input">
+        <h2>Add new visit:</h2>
+        <div class="form-group">
+            <input type="hidden" th:field="${visit.id}">
+            <label for="desc">Enter visit description:</label>
+            <textarea class="form-control" required th:field="${visit.description}" id="desc"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="cost">Enter visit cost:</label>
+            <input class="form-control" type="text" th:field="${visit.cost}" id="cost">
+            <div class="alert alert-warning" th:if="${#fields.hasErrors('cost')}"
+                 th:eror="*{cost}">Must be valid visit cost!</div>
+        </div>
+        <div class="form-group">
+            <label for="drop-animal">Select animal:</label>
+            <select class="form-control" required th:field="${visit.animal.id}" id="drop-animal">
+                <option value="">Select animal:</option>
+                <option th:each="animal : ${animals}" th:value="${animal.id}" th:text="${animal.name}"></option>
+            </select>
+        </div>
+        <input class="button button-standard" type="submit" value="Add!">
+    </form>
+</div>
+</body>
+</html>

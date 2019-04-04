@@ -1,11 +1,5 @@
 package com.hendzior.veterinary.core;
 
-import com.hendzior.veterinary.core.dao.AnimalDataAccess;
-import com.hendzior.veterinary.core.dao.CustomerDataAccess;
-import com.hendzior.veterinary.core.dao.VisitDataAccess;
-import com.hendzior.veterinary.core.model.Animal;
-import com.hendzior.veterinary.core.model.Customer;
-import com.hendzior.veterinary.core.model.Visit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;

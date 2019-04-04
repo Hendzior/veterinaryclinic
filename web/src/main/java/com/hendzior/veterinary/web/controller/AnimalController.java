@@ -21,12 +21,10 @@ public class AnimalController {
 
     private AnimalDataAccess animalDataAccess;
     private CustomerDataAccess customerDataAccess;
-    private DataInputValidator dataInputValidator;
 
     public AnimalController(AnimalDataAccess animalDataAccess, CustomerDataAccess customerDataAccess, DataInputValidator dataInputValidator) {
         this.animalDataAccess = animalDataAccess;
         this.customerDataAccess = customerDataAccess;
-        this.dataInputValidator = dataInputValidator;
     }
 
     @GetMapping
